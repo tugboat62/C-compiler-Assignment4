@@ -18,7 +18,10 @@ string symbolName;
 string symbolType;
 string calledFunction;
 string currentFunction;
+string code;
 string currentDataType = "void";
+vector<string> dataSting;
+vector<pair<string, string>> arraySet; 
 
 
 void yyerror(char *s)
@@ -28,6 +31,7 @@ void yyerror(char *s)
 
 FILE* log_file = fopen("1805051_log.txt", "w");
 FILE* error_file = fopen("1805051_error.txt", "w");
+FILE* code_file = fopen("code.asm", "w");
 
 void printInLogFile(string grammar, int line) {
 	string l = "Line " + to_string(line) + ": " + grammar + "\n\n";
@@ -46,6 +50,22 @@ void printError(string error, int line){
 	++numError;
 }
 
+string template(vector<string> data, string codeString) {
+	string finalCode = ".MODEL SMALL\n\
+	.STACK 100h\n\
+	.DATA\n";
+
+	for (int i = 0; i < data.size(); i++) {
+		finalCode += data[i] + " DW  ?" + "\n";
+	}
+	for (int i = 0; i < arraySet.size(); i++) {
+		finalCode += arraySet[i].first + " DW DUP "+arraySet[i].second+" \n";
+	}
+	finalCode += "\n.CODE\n\n";
+
+	finalCode += codeString;
+	return finalCode;
+}
 
 
 %}
@@ -90,6 +110,10 @@ start : program
 				fprintf(log_file, l.c_str());
 				l = "Total Errors: " + to_string(numError) + "\n";
 				fprintf(log_file, l.c_str());
+
+				$$->code += $1->code;
+				string codeSnippet = template(dataString, $$->code) + "\n";
+				fprintf(code_file, codeSnippet.c_str());
 			}
 ;
 
@@ -100,6 +124,7 @@ program : program unit
 				symbolName = $1->getName() + $2->getName();
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+				$$->code += $1->code + $2->code;
 			}
 | unit
 			{
@@ -107,6 +132,7 @@ program : program unit
 				symbolName = $1->getName();
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+				$$->code += $1->code;
 			}
 ;
 
@@ -117,6 +143,7 @@ unit : var_declaration
 				symbolName = $1->getName() + "\n";
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+				$$->code += $1->code;
 			}
 | func_declaration
 			{
@@ -124,6 +151,7 @@ unit : var_declaration
 				symbolName = $1->getName();
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+				$$->code += $1->code;
 			}
 | func_definition
 			{
@@ -131,6 +159,7 @@ unit : var_declaration
 				symbolName = $1->getName();
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+				$$->code += $1->code;
 			}
 ;
 
@@ -234,6 +263,37 @@ compound_statement
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");	
 				completedFunc.push_back(currentFunction);
+
+				SymbolInfo* s = table->LookUp(currentFunction);
+				vector<SymbolInfo> parameters = s->getParams();
+				for (int i=0; i<parameters.size(); i++) {
+					$$->code += "POP AX\n";
+					$$->code += "MOV "+parameters[i].getName()+", AX\n";
+				}
+
+				$$->code += currentFunction+" PROC\n";
+				if(currentFuction != "main") {
+					$$->code += "MOV AX, @DATA\n";
+					$$->code += "MOV DS, AX\n";
+					$$->code += "XOR BX, BX\n";
+					$$->code += "XOR CX, CX\n";
+				}
+				$$->code += $1->code + $2->code + $4->code + $7->code;
+
+				if(currentFuction != "main") {
+					if(s->getDataType()!="void"){
+						$$->code += "PUSH AX\n";
+					}
+					if(parameters.size()>0){
+						$$->code += "RET "+to_string(parameters.size()*2)+"\n";
+					}
+					else {
+						$$->code += "RET\n";
+					}
+				}else{
+					$$->code += "\nMOV AH, 4CH\nINT 21H\n";
+				}	
+				$$->code += currentFunction + " ENDP\n"	;
 			}	
 | type_specifier ID LPAREN RPAREN 
 			{
@@ -260,6 +320,32 @@ compound_statement
 
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
 				completedFunc.push_back(currentFunction);
+
+				$$->code += currentFunction+" PROC\n";
+				if(currentFuction == "main") {
+					$$->code += "MOV AX, @DATA\n";
+					$$->code += "MOV DS, AX\n";
+				}
+				else{
+					$$->code += "PUSH AX\n";
+					$$->code += "PUSH BX\n";
+					$$->code += "PUSH CX\n";
+					$$->code += "PUSH DX\n";
+				}
+
+				$$->code += $1->code + $6->code;
+				
+				if(currentFunction != "main"){
+					$$->code += "POP DX\n";
+					$$->code += "POP CX\n";
+					$$->code += "POP BX\n";
+					$$->code += "POP AX\n";
+					$$->code += "RET\n";
+				}
+				else{
+					$$->code += "MOV AH, 4CH\nINT 21H\n";
+				}
+				$$->code += currentFunction + " ENDP\n"	;
 			}
 ;
 
@@ -284,9 +370,12 @@ parameter_list : parameter_list COMMA type_specifier ID
 						break;
 					}
 				}
-				if(i == parameterList.size()) {
+				if(i == parameterList.size()) {   
 					parameterList.push_back(*s);
 				}
+				$$->code += $1->code + $3->code + $4->code;
+
+				dataString.push_back($4->getName());
 			}
 | parameter_list COMMA type_specifier
 			{
@@ -295,6 +384,7 @@ parameter_list : parameter_list COMMA type_specifier ID
 				printToken(symbolName);
 
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+				$$->code += $1->code + $3->code;
 			}
 | type_specifier ID
 			{
@@ -308,6 +398,8 @@ parameter_list : parameter_list COMMA type_specifier ID
 				s->setKeyType("variable");
 				s->setDataType($1->getName());
 				parameterList.push_back(*s);
+				$$->code += $1->code + $2->code;
+				dataString.push_back($2->getName());
 			}
 | type_specifier
 			{
@@ -315,6 +407,7 @@ parameter_list : parameter_list COMMA type_specifier ID
 				printInLogFile("parameter_list  : type_specifier", numLine);
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+				$$->code += $1->code;
 			}
 ;
 
@@ -336,6 +429,7 @@ statements RCURL
 				table->printModified(log_file);
 				parameterList.clear();
 				table->ExitScope();
+				
 			}
 | LCURL RCURL
 			{

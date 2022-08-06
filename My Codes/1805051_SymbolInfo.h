@@ -19,6 +19,7 @@ class SymbolInfo
     SymbolInfo *next;
 
 public:
+    string code;
     SymbolInfo()
     {
         this->name = "";
@@ -26,6 +27,7 @@ public:
         this->next = NULL;
         this->dataType = "";
         this->keyType = "";
+        this->code = "";
         this->paramsNum = 0;
         this->arraySize = 0;
     }
@@ -37,6 +39,7 @@ public:
         this->next = nextPointer;
         this->dataType = "";
         this->keyType = "";
+        this->code = "";
         this->paramsNum = 0;
         this->arraySize = 0;
     }
