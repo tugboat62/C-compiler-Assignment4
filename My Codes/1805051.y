@@ -931,8 +931,25 @@ logic_expression : rel_expression
 					$$->setName(t1);
 				}
 				else if($2->getName()=="||"){
-					
+					string l1 = labelHandler();
+					string l2 = labelHandler();
+					string t1 = varProduce();
+					dataString.push_back(t1);
+
+					temp += "CMP AX, 0\n";
+					temp += "JNE " + l1 + "\n";
+					temp += "CMP BX, 0\n";
+					temp += "JNE " + l1 + "\n";
+					temp += "MOV AX, 0\n";
+					temp += "MOV " + t1 + ", AX\n";
+					temp += "JMP " + l2 + "\n";
+					temp += l1 + ":\n";
+					temp += "MOV AX, 1\n";
+					temp += "MOV " + t1 + ", AX\n";
+					temp += l2 + ":\n";
+					$$->setName(t1);
 				}
+				$$->code += temp;
 			}
 ;
 
