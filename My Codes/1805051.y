@@ -22,7 +22,7 @@ string calledFunction;
 string currentFunction;
 string code;
 string currentDataType = "void";
-vector<string> dataSting;
+vector<string> dataString;
 vector<pair<string, string>> arraySet; 
 
 
@@ -54,7 +54,7 @@ void printError(string error, int line){
 
 string labelHandler(){
 	string label = "LABEL" + to_string(labels);
-	label++;
+	labels++;
 	return label;
 }
 
@@ -65,7 +65,7 @@ string varProduce(){
 	return var;
 }
 
-string template(vector<string> data, string codeString) {
+string create_template(vector<string> data, string codeString) {
 	string finalCode = ".MODEL SMALL\n\
 	.STACK 100h\n\
 	.DATA\n";
@@ -127,7 +127,7 @@ start : program
 				fprintf(log_file, l.c_str());
 
 				$$->code += $1->code;
-				string codeSnippet = template(dataString, $$->code) + "\n";
+				string codeSnippet = create_template(dataString, $$->code) + "\n";
 				fprintf(code_file, codeSnippet.c_str());
 			}
 ;
@@ -287,7 +287,7 @@ compound_statement
 				}
 
 				$$->code += currentFunction+" PROC\n";
-				if(currentFuction != "main") {
+				if(currentFunction != "main") {
 					$$->code += "MOV AX, @DATA\n";
 					$$->code += "MOV DS, AX\n";
 					$$->code += "XOR BX, BX\n";
@@ -295,7 +295,7 @@ compound_statement
 				}
 				$$->code += $1->code + $2->code + $4->code + $7->code;
 
-				if(currentFuction != "main") {
+				if(currentFunction != "main") {
 					if(s->getDataType()!="void"){
 						$$->code += "PUSH AX\n";
 					}
@@ -337,7 +337,7 @@ compound_statement
 				completedFunc.push_back(currentFunction);
 
 				$$->code += currentFunction+" PROC\n";
-				if(currentFuction == "main") {
+				if(currentFunction == "main") {
 					$$->code += "MOV AX, @DATA\n";
 					$$->code += "MOV DS, AX\n";
 				}
@@ -548,7 +548,7 @@ declaration_list : declaration_list COMMA ID
 						table->Insert(*s);
 				}
 				printToken(symbolName);
-				arraySet.push_back(make_psir($3->getName(), $5->getName()));
+				arraySet.push_back(make_pair($3->getName(), $5->getName()));
 			}
 | ID
 			{
@@ -599,7 +599,7 @@ declaration_list : declaration_list COMMA ID
 						table->Insert(*s);
 				}
 				printToken(symbolName);
-				arraySet.push_back(make_psir($3->getName(), $5->getName()));
+				arraySet.push_back(make_pair($1->getName(), $3->getName()));
 
 			}
 ;
@@ -975,6 +975,9 @@ rel_expression : simple_expression
 				}
 
 				printToken(symbolName);
+
+				string temp = $1->code + $3->code;
+
 			}
 ;
 

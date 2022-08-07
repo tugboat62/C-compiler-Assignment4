@@ -1,0 +1,78 @@
+.MODEL SMALL
+	.STACK 100h
+	.DATA
+x DW  ?
+y DW  ?
+z DW  ?
+a DW  ?
+a DW  ?
+b DW  ?
+c DW  ?
+i DW  ?
+j DW  ?
+d DW  ?
+t0 DW  ?
+t1 DW  ?
+a DW DUP 2 
+
+.CODE
+
+POP AX
+MOV a, AX
+POP AX
+MOV b, AX
+var PROC
+MOV AX, @DATA
+MOV DS, AX
+XOR BX, BX
+XOR CX, CX
+PUSH AX
+RET 4
+var ENDP
+foo PROC
+PUSH AX
+PUSH BX
+PUSH CX
+PUSH DX
+MOV AX, 2
+MOV x, AX
+MOV AX, x - 5
+MOV y, AX
+POP DX
+POP CX
+POP BX
+POP AX
+RET
+foo ENDP
+main PROC
+MOV AX, @DATA
+MOV DS, AX
+MOV BX, 0
+ADD BX, BX
+MOV BX, 1
+ADD BX, BX
+MOV AX, 5
+MOV a[BX], AX
+MOV AX, a[BX] + a[BX]
+MOV i, AX
+MOV AX, 2 * 3 +  ( t0 )
+MOV BX, 2
+CMP AX, 0
+JNE LABEL2
+CMP BX, 0
+JNE LABEL2
+MOV AX, 0
+MOV t1, AX
+JMP LABEL3
+LABEL2:
+MOV AX, 1
+MOV t1, AX
+LABEL3:
+MOV AX, t1
+MOV j, AX
+MOV AX, var ( 1 , 2 * 3 ) + 3.5 * 2
+MOV d, AX
+MOV AH, 4CH
+INT 21H
+main ENDP
+
