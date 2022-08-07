@@ -13,6 +13,7 @@ SymbolTable* table = new SymbolTable(30);
 int numLine = 1;
 int numError = 0;
 int labels = 0;
+int variables = 0;
 vector<SymbolInfo> parameterList;
 vector<string> completedFunc;
 string symbolName;
@@ -55,6 +56,13 @@ string labelHandler(){
 	string label = "LABEL" + to_string(labels);
 	label++;
 	return label;
+}
+
+string varProduce(){
+	string var = "t";
+	var += to_string(variables);
+	variables++;
+	return var;
 }
 
 string template(vector<string> data, string codeString) {
@@ -872,6 +880,10 @@ expression : logic_expression
 
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+
+				$$->code += $1->code + $3->code;
+				$$->code += "MOV AX, " + $3->getName() + "\n";
+				$$->code += "MOV " + $1->getName() + ", AX\n";
 			}
 ;
 
@@ -895,6 +907,32 @@ logic_expression : rel_expression
 					printError("Void function used in expression", numLine);				
 				}
 				printToken(symbolName);
+				string temp = $1->code + $3->code;
+				temp += "MOV AX, " + $1->getName() + "\n";
+				temp += "MOV BX, " + $3->getName() + "\n";
+
+				if($2->getName()=="&&"){
+					string l1 = labelHandler();
+					string l2 = labelHandler();
+					string t1 = varProduce();
+					dataString.push_back(t1);
+
+					temp += "CMP AX, 0\n";
+					temp += "JE " + l1 + "\n";
+					temp += "CMP BX, 0\n";
+					temp += "JE " + l1 + "\n";
+					temp += "MOV AX, 1\n";
+					temp += "MOV " + t1 + ", AX\n";
+					temp += "JMP " + l2 + "\n";
+					temp += l1 + ":\n";
+					temp += "MOV AX, 0\n";
+					temp += "MOV " + t1 + ", AX\n";
+					temp += l2 + ":\n";
+					$$->setName(t1);
+				}
+				else if($2->getName()=="||"){
+					
+				}
 			}
 ;
 
