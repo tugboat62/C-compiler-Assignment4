@@ -12,6 +12,7 @@ SymbolTable* table = new SymbolTable(30);
 
 int numLine = 1;
 int numError = 0;
+int labels = 0;
 vector<SymbolInfo> parameterList;
 vector<string> completedFunc;
 string symbolName;
@@ -48,6 +49,12 @@ void printError(string error, int line){
 	fprintf(log_file, l.c_str());
 	fprintf(error_file, l.c_str());
 	++numError;
+}
+
+string labelHandler(){
+	string label = "LABEL" + to_string(labels);
+	label++;
+	return label;
 }
 
 string template(vector<string> data, string codeString) {
@@ -429,7 +436,7 @@ statements RCURL
 				table->printModified(log_file);
 				parameterList.clear();
 				table->ExitScope();
-				
+				$$->code += $3->code;
 			}
 | LCURL RCURL
 			{
@@ -454,6 +461,7 @@ var_declaration : type_specifier declaration_list SEMICOLON
 				if($1->getName() == "void") {
 					printError("Variable type cannot be void", numLine);
 				}
+				$$->code += $1->code + $2->code;
 			}
 ;
 
@@ -506,6 +514,7 @@ declaration_list : declaration_list COMMA ID
 						table->Insert(*s);
 				}
 				printToken(symbolName);
+				dataString.push_back($3->getName());
 			}
 | declaration_list COMMA ID LTHIRD CONST_INT RTHIRD
 			{
@@ -531,6 +540,7 @@ declaration_list : declaration_list COMMA ID
 						table->Insert(*s);
 				}
 				printToken(symbolName);
+				arraySet.push_back(make_psir($3->getName(), $5->getName()));
 			}
 | ID
 			{
@@ -553,6 +563,8 @@ declaration_list : declaration_list COMMA ID
 					if (currentDataType != "void")
 						table->Insert(*s);
 				}
+
+				dataString.push_back($1->getName());
 				printToken(symbolName);
 			}
 | ID LTHIRD CONST_INT RTHIRD
@@ -579,6 +591,8 @@ declaration_list : declaration_list COMMA ID
 						table->Insert(*s);
 				}
 				printToken(symbolName);
+				arraySet.push_back(make_psir($3->getName(), $5->getName()));
+
 			}
 ;
 
@@ -591,6 +605,7 @@ statements : statement
 				printToken(symbolName);
 
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+				$$->code += $1->code;
 			}
 | statements statement
 			{
@@ -600,6 +615,7 @@ statements : statement
 				printToken(symbolName);
 
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+				$$->code += $1->code + $2->code;
 			}
 ;
 
@@ -612,6 +628,7 @@ statement : var_declaration
 				printToken(symbolName);
 
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+				$$->code += $1->code;
 			}
 | expression_statement
 			{
@@ -621,6 +638,7 @@ statement : var_declaration
 				printToken(symbolName);
 
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+				$$->code += $1->code;
 			}
 | compound_statement
 			{
@@ -630,6 +648,7 @@ statement : var_declaration
 				printToken(symbolName);
 
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+				$$->code += $1->code;
 			}
 | FOR LPAREN expression_statement expression_statement expression
 RPAREN statement
@@ -640,7 +659,21 @@ RPAREN statement
 				printToken(symbolName);
 
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
-				
+
+				string temp = $3->code;
+				string l1 = labelHandler();
+				temp += l1 + ":\n";
+				temp += $4->code;
+				temp += "MOV BX, 0\n";
+				temp += "CMP AX, BX\n";
+				string l2 = labelHandler();
+				temp += "JE " + l2 + "\n";
+				temp += $7->code;
+				temp += $5->code;
+				temp += "JMP " + l1 + "\n";
+				temp += l2 + ":\n";
+
+				$$->code += temp;
 			}
 | IF LPAREN expression RPAREN statement %prec LOWER_THAN_ELSE
 			{
@@ -650,6 +683,15 @@ RPAREN statement
 				printToken(symbolName);
 
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+
+				string l = labelHandler();
+				string temp = $3->code;
+				temp += "MOV AX, "+$3->getName()+"\n";
+				temp += "CMP AX, 0\n";
+				temp += "JE " + l + "\n";
+				temp += $5->code;
+				temp += l + ":\n";
+				$$->code += temp;
 			}
 | IF LPAREN expression RPAREN statement ELSE statement
 			{
@@ -659,6 +701,18 @@ RPAREN statement
 				printToken(symbolName);
 
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+				string l1 = labelHandler();
+				string l2 = labelHandler();
+				string temp = $3->code;
+				temp += "MOV AX, "+$3->getName()+"\n";
+				temp += "CMP AX, 0\n";
+				temp += "JE " + l1 + "\n";
+				temp += $5->code;
+				temp += "JMP " + l2 + "\n";
+				temp += l1 + ":\n";
+				temp += $7->code;
+				temp += l2 + ":\n";
+				$$->code += temp;
 			}
 | WHILE LPAREN expression RPAREN statement
 			{
@@ -668,6 +722,17 @@ RPAREN statement
 				printToken(symbolName);
 
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+				string l1 = labelHandler();
+				string l2 = labelHandler();
+				string temp = l1 + ":\n";
+				temp += $3->code;
+				temp += "MOV AX, "+$3->getName()+"\n";
+				temp += "CMP AX, 0\n";
+				temp += "JE " + l2 + "\n";
+				temp += $5->code;
+				temp += "JMP " + l1 + "\n";
+				temp += l2 + ":\n";
+				$$->code += temp;
 			}
 | PRINTLN LPAREN ID RPAREN SEMICOLON
 			{
@@ -681,6 +746,8 @@ RPAREN statement
 					printError(l, numLine);
 				}
 				printToken(symbolName);
+
+				$$->code += "MOV AX, " + $3->getName() + "\nCALL OUTDEC\n";
 			}
 | RETURN expression SEMICOLON
 			{
@@ -716,6 +783,7 @@ expression_statement : SEMICOLON
 				printToken(symbolName);
 
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+				$$->code += $1->code;
 			}
 ;
 
@@ -767,6 +835,11 @@ variable : ID
 					$$->setDataType(s->getDataType());
 				}
 				printToken(symbolName);
+
+				$$->code += $1->code + $3->code;
+				$$->code += "MOV BX, " + $3->getName() + "\n";
+				$$->code += "ADD BX, BX\n";
+				$$->setName($1->getName() + "[BX]");
 			}
 ;
 
