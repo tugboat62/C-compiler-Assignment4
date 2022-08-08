@@ -680,6 +680,7 @@ RPAREN statement
 				temp += $5->code;
 				temp += "JMP " + l1 + "\n";
 				temp += l2 + ":\n";
+				code = temp;
 
 				$$->code += temp;
 			}
@@ -699,6 +700,7 @@ RPAREN statement
 				temp += "JE " + l + "\n";
 				temp += $5->code;
 				temp += l + ":\n";
+				code = temp;
 				$$->code += temp;
 			}
 | IF LPAREN expression RPAREN statement ELSE statement
@@ -720,6 +722,7 @@ RPAREN statement
 				temp += l1 + ":\n";
 				temp += $7->code;
 				temp += l2 + ":\n";
+				code = temp;
 				$$->code += temp;
 			}
 | WHILE LPAREN expression RPAREN statement
@@ -740,6 +743,7 @@ RPAREN statement
 				temp += $5->code;
 				temp += "JMP " + l1 + "\n";
 				temp += l2 + ":\n";
+				code = temp;
 				$$->code += temp;
 			}
 | PRINTLN LPAREN ID RPAREN SEMICOLON
@@ -754,8 +758,8 @@ RPAREN statement
 					printError(l, numLine);
 				}
 				printToken(symbolName);
-
-				$$->code += "MOV AX, " + $3->getName() + "\nCALL OUTDEC\n";
+				codeString = "MOV AX, " + $3->getName() + "\nCALL OUTDEC\n"; 
+				$$->code += codeString;
 			}
 | RETURN expression SEMICOLON
 			{
@@ -769,7 +773,6 @@ RPAREN statement
 				if(cf->getDataType() == "void") {
 					printError("returning with a value but in function definition, returning type is void", numLine);
 				}
-				// has to check temp->getDataType() != "float" why don't know
 				else if(cf->getDataType() != $2->getDataType()) {
 					printError("Function return type error", numLine);
 				}
@@ -949,6 +952,7 @@ logic_expression : rel_expression
 					temp += l2 + ":\n";
 					$$->setName(t1);
 				}
+				code = temp;
 				$$->code += temp;
 			}
 ;
@@ -1039,6 +1043,7 @@ rel_expression : simple_expression
 					temp += "MOV AX, "+ t2 + "\n";
 				}
 
+				code = temp;
 				$$->code += temp;
 				$$->setName(t1);
 
@@ -1086,6 +1091,7 @@ simple_expression : term
 					temp += "MOV " + t + ", AX\n";
 				}
 
+				code = temp;
 				$$->code += temp;
 				$$->setName(t);
 			}
@@ -1152,6 +1158,7 @@ term : unary_expression
 					temp += "IDIV BX\n";
 					temp += "MOV " + t + ", DX\n";
 				}
+				code = temp;
 				$$->code += temp;
 				$$->setName(t);
 			}
@@ -1233,18 +1240,28 @@ factor : variable
 							}
 						}
 					}							
-					parameterList.clear();
+					
 					$$->setDataType(s->getDataType());
 				}
 				printToken(symbolName);
+				for(auto i: parameterList){
+					$$->code += "MOV AX, " + i.getName() + "\n";
+					$$->code += "PUSH AX\n";
+				}
+				parameterList.clear();
+				$$->code += "CALL " + calledFunction + "\n";
+				if (t->getDataType()!="void") {
+					$$->code += "POP AX\n";
+				}
 			}
 | LPAREN expression RPAREN
 			{
 				symbolName = " ( " + $2->getName() + " )";
 				printInLogFile("factor : LPAREN expression RPAREN", numLine);
 				printToken(symbolName);
-				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+				$$ = new SymbolInfo($2->getName(), "NON_TERMINAL");
 				$$->setDataType($2->getDataType());
+				$$->code = $2->code;
 			}
 | CONST_INT
 			{
@@ -1254,6 +1271,8 @@ factor : variable
 				$$ = $1;
 				$$->setKeyType("value");
 				$$->setDataType("int");
+				code = "MOV AX, " + $1->getName() + "\n";
+				$$->code += code;
 			}
 | CONST_FLOAT
 			{
@@ -1263,6 +1282,8 @@ factor : variable
 				$$ = $1;
 				$$->setKeyType("value");
 				$$->setDataType("float");
+				code = "MOV AX, " + $1->getName() + "\n";
+				$$->code += code;
 			}
 | variable INCOP
 			{
@@ -1270,6 +1291,10 @@ factor : variable
 				printInLogFile("factor : variable INCOP", numLine);
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+				code = "MOV AX, " + $1->getName() + "\n";
+				code += "INC AX\n";
+				code += "MOV " + $1->getName() + ", AX\n";
+				$$->code += code;
 			}
 | variable DECOP
 			{
@@ -1277,6 +1302,10 @@ factor : variable
 				printInLogFile("factor : variable DECOP", numLine);
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
+				code = "MOV AX, " + $1->getName() + "\n";
+				code += "DEC AX\n";
+				code += "MOV " + $1->getName() + ", AX\n";
+				$$->code += code;
 			}
 ;
 
@@ -1304,7 +1333,8 @@ arguments : arguments COMMA logic_expression
 				printInLogFile("arguments : arguments COMMA logic_expression", numLine);
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
-				parameterList.push_back(*$3);	
+				parameterList.push_back(*$3);
+				$$->code = $1->code + $3->code;	
 			}
 | logic_expression
 			{
