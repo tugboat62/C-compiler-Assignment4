@@ -977,6 +977,70 @@ rel_expression : simple_expression
 				printToken(symbolName);
 
 				string temp = $1->code + $3->code;
+				string l1 = labelHandler();
+				string t1 = varProduce();
+				string t2 = varProduce();
+				dataString.push_back(t1);
+				dataString.push_back(t2);
+
+				temp += "MOV AX, 0\n";
+				temp += "MOV " + t1 + ", AX\n";
+				temp += "MOV " + t2 + ", AX\n";
+				temp += "MOV AX, " + $1->getName() + "\n";
+				temp += "MOV BX, " + $3->getName() + "\n";
+				temp += "CMP AX, BX\n";
+
+				if($2->getName() == "==") {
+					temp += "JNE " + l1 + "\n";
+					temp += "MOV AX, 1\n";
+					temp += "MOV " + t1 + ", AX\n";
+					temp += "MOV " + t2 + ", AX\n";
+					temp += l1 + ":\n";
+					temp += "MOV AX, "+ t2 + "\n";
+				}
+				else if($2->getName() == "!="){
+					temp += "JE " + l1 + "\n";
+					temp += "MOV AX, 1\n";
+					temp += "MOV " + t1 + ", AX\n";
+					temp += "MOV " + t2 + ", AX\n";
+					temp += l1 + ":\n";
+					temp += "MOV AX, "+ t2 + "\n";
+				} 
+				else if($2->getName() == ">="){
+					temp += "JNGE " + l1 + "\n";
+					temp += "MOV AX, 1\n";
+					temp += "MOV " + t1 + ", AX\n";
+					temp += "MOV " + t2 + ", AX\n";
+					temp += l1 + ":\n";
+					temp += "MOV AX, "+ t2 + "\n";
+				}
+				else if($2->getName() == "<="){
+					temp += "JNLE " + l1 + "\n";
+					temp += "MOV AX, 1\n";
+					temp += "MOV " + t1 + ", AX\n";
+					temp += "MOV " + t2 + ", AX\n";
+					temp += l1 + ":\n";
+					temp += "MOV AX, "+ t2 + "\n";
+				}
+				else if($2->getName() == ">"){
+					temp += "JNG " + l1 + "\n";
+					temp += "MOV AX, 1\n";
+					temp += "MOV " + t1 + ", AX\n";
+					temp += "MOV " + t2 + ", AX\n";
+					temp += l1 + ":\n";
+					temp += "MOV AX, "+ t2 + "\n";
+				}
+				else if($2->getName() == "<"){
+					temp += "JNL " + l1 + "\n";
+					temp += "MOV AX, 1\n";
+					temp += "MOV " + t1 + ", AX\n";
+					temp += "MOV " + t2 + ", AX\n";
+					temp += l1 + ":\n";
+					temp += "MOV AX, "+ t2 + "\n";
+				}
+
+				$$->code += temp;
+				$$->setName(t1);
 
 			}
 ;
@@ -1007,7 +1071,23 @@ simple_expression : term
 				}
 				else if($1->getDataType()=="int" || $3->getDataType()=="int"){
 					$$->setDataType("int");
-				} 
+				}
+
+				string temp = "MOV AX, " + $1->getName() + "\n";
+				temp += "MOV BX, " + $3->getName() + "\n";
+				string t = varProduce();
+
+				if($2->getName() == "+"){
+					temp += "ADD AX, BX\n";
+					temp += "MOV " + t + ", AX\n";
+				}
+				else if($2->getName() == "-"){
+					temp += "SUB AX, BX\n";
+					temp += "MOV " + t + ", AX\n";
+				}
+
+				$$->code += temp;
+				$$->setName(t);
 			}
 ;
 
@@ -1051,6 +1131,29 @@ term : unary_expression
 					}
 				}
 				printToken(symbolName);
+
+				string temp = $1->code + $3->code;
+				temp += "MOV AX, " + $1->getName() + "\n";
+				temp += "MOV BX, " + $3->getName() + "\n";
+				string t = varProduce();
+				if($2->getName() == "*"){
+					temp += "MUL AX, BX\n";
+					temp += "MOV " + t + ", AX\n";
+				}
+				else if($2->getName() == "/"){
+					temp += "XOR DX, DX\n";
+					temp += "CWD\n";
+					temp += "IDIV BX\n";
+					temp += "MOV " + t + ", AX\n";
+				}
+				else if($2->getName() == "%"){
+					temp += "XOR DX, DX\n";
+					temp += "CWD\n";
+					temp += "IDIV BX\n";
+					temp += "MOV " + t + ", DX\n";
+				}
+				$$->code += temp;
+				$$->setName(t);
 			}
 ;
 
@@ -1063,6 +1166,7 @@ unary_expression : ADDOP unary_expression
 
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
 				$$->setDataType($2->getDataType());
+				$$->code = $2->code;
 			}
 | NOT unary_expression
 			{
@@ -1072,6 +1176,11 @@ unary_expression : ADDOP unary_expression
 
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
 				$$->setDataType($2->getDataType());
+
+				string t = varProduce();
+				$$->code += "MOV AX, " + $2->getName() + "\n";
+				$$->code += "NOT AX\n";
+				$$->code += "MOV " + t + ", AX\n";
 			}
 | factor
 			{
