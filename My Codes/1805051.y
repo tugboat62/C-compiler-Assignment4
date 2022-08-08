@@ -76,9 +76,48 @@ string create_template(vector<string> data, string codeString) {
 	for (int i = 0; i < arraySet.size(); i++) {
 		finalCode += arraySet[i].first + " DW DUP "+arraySet[i].second+" \n";
 	}
-	finalCode += "\n.CODE\n\n";
+	finalCode += "\n.CODE\n\n" + code;
 
-	finalCode += codeString;
+	finalCode += "OUTDEC PROC\n\
+\n\
+PUSH AX\n\
+PUSH BX\n\
+PUSH CX\n\
+PUSH DX\n\
+OR AX, AX\n\
+JGE @END_IF1\n\
+\n\
+PUSH AX\n\
+MOV DL, '-'\n\
+MOV AH, 2\n\
+INT 21H\n\
+POP AX\n\
+NEG AX\n\
+@END_IF1:\n\
+XOR CX, CX\n\
+MOV BX, 10D\n\
+@REPEAT1:\n\
+XOR DX, DX\n\
+DIV BX\n\
+PUSH DX\n\
+INC CX\n\
+OR AX, AX\n\
+JNE @REPEAT1\n\
+\n\
+MOV AH, 2\n\
+@PRINT_LOOP:\n\
+POP DX\n\
+OR DL, 30H\n\
+INT 21H\n\
+LOOP @PRINT_LOOP\n\
+POP DX\n\
+POP CX\n\
+POP BX\n\
+POP AX\n\
+RET\n\
+OUTDEC ENDP\n";
+
+	finalCode += "\nEND MAIN";
 	return finalCode;
 }
 
@@ -758,8 +797,8 @@ RPAREN statement
 					printError(l, numLine);
 				}
 				printToken(symbolName);
-				codeString = "MOV AX, " + $3->getName() + "\nCALL OUTDEC\n"; 
-				$$->code += codeString;
+				code = "MOV AX, " + $3->getName() + "\nCALL OUTDEC\n"; 
+				$$->code += code;
 			}
 | RETURN expression SEMICOLON
 			{
@@ -1250,7 +1289,7 @@ factor : variable
 				}
 				parameterList.clear();
 				$$->code += "CALL " + calledFunction + "\n";
-				if (t->getDataType()!="void") {
+				if (s->getDataType()!="void") {
 					$$->code += "POP AX\n";
 				}
 			}
