@@ -97,7 +97,7 @@ public:
             newSymbolInfo->setParamsNum(paramsNum);
             newSymbolInfo->setArraySize(arraySize);
             newSymbolInfo->setNextSymbolInfo(next);
-            newSymbolInfo->code = code;
+            newSymbolInfo->setCode(code);
             table[index] = newSymbolInfo;
             return true;
         }
@@ -137,7 +137,7 @@ public:
             newSymbolInfo->setParamsNum(paramsNum);
             newSymbolInfo->setArraySize(arraySize);
             newSymbolInfo->setNextSymbolInfo(next);
-            newSymbolInfo->code = code;
+            newSymbolInfo->setCode(code);
             
             root->setNextSymbolInfo(newSymbolInfo);
             return true;

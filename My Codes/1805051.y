@@ -165,7 +165,7 @@ start : program
 				l = "Total Errors: " + to_string(numError) + "\n";
 				fprintf(log_file, l.c_str());
 
-				$$->code += $1->code;
+				$$->appendCode($1->getCode());
 				string codeSnippet = create_template(dataString, $$->code) + "\n";
 				fprintf(code_file, codeSnippet.c_str());
 			}
@@ -178,7 +178,7 @@ program : program unit
 				symbolName = $1->getName() + $2->getName();
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
-				$$->code += $1->code + $2->code;
+				$$->appendCode($1->getCode() + $2->getCode());
 			}
 | unit
 			{
@@ -186,7 +186,7 @@ program : program unit
 				symbolName = $1->getName();
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
-				$$->code += $1->code;
+				$$->appendCode($1->getCode());
 			}
 ;
 
@@ -197,7 +197,7 @@ unit : var_declaration
 				symbolName = $1->getName() + "\n";
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
-				$$->code += $1->code;
+				$$->appendCode($1->getCode());
 			}
 | func_declaration
 			{
@@ -205,7 +205,7 @@ unit : var_declaration
 				symbolName = $1->getName();
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
-				$$->code += $1->code;
+				$$->appendCode($1->getCode());
 			}
 | func_definition
 			{
@@ -213,7 +213,7 @@ unit : var_declaration
 				symbolName = $1->getName();
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
-				$$->code += $1->code;
+				$$->appendCode($1->getCode());
 			}
 ;
 
@@ -1388,7 +1388,6 @@ arguments : arguments COMMA logic_expression
 %%
 int main(int argc,char *argv[])
 {
-
 	FILE* fp;
 	if((fp=fopen(argv[1],"r"))==NULL)
 	{

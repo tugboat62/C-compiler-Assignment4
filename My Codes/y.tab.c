@@ -1510,7 +1510,7 @@ yyreduce:
 				l = "Total Errors: " + to_string(numError) + "\n";
 				fprintf(log_file, l.c_str());
 
-				(yyval.symbol)->code += (yyvsp[0].symbol)->code;
+				(yyval.symbol)->appendCode((yyvsp[0].symbol)->getCode());
 				string codeSnippet = create_template(dataString, (yyval.symbol)->code) + "\n";
 				fprintf(code_file, codeSnippet.c_str());
 			}
@@ -1524,7 +1524,7 @@ yyreduce:
 				symbolName = (yyvsp[-1].symbol)->getName() + (yyvsp[0].symbol)->getName();
 				printToken(symbolName);
 				(yyval.symbol) = new SymbolInfo(symbolName, "NON_TERMINAL");
-				(yyval.symbol)->code += (yyvsp[-1].symbol)->code + (yyvsp[0].symbol)->code;
+				(yyval.symbol)->appendCode((yyvsp[-1].symbol)->getCode() + (yyvsp[0].symbol)->getCode());
 			}
 #line 1530 "y.tab.c" /* yacc.c:1646  */
     break;
@@ -1536,7 +1536,7 @@ yyreduce:
 				symbolName = (yyvsp[0].symbol)->getName();
 				printToken(symbolName);
 				(yyval.symbol) = new SymbolInfo(symbolName, "NON_TERMINAL");
-				(yyval.symbol)->code += (yyvsp[0].symbol)->code;
+				(yyval.symbol)->appendCode((yyvsp[0].symbol)->getCode());
 			}
 #line 1542 "y.tab.c" /* yacc.c:1646  */
     break;
@@ -1548,7 +1548,7 @@ yyreduce:
 				symbolName = (yyvsp[0].symbol)->getName() + "\n";
 				printToken(symbolName);
 				(yyval.symbol) = new SymbolInfo(symbolName, "NON_TERMINAL");
-				(yyval.symbol)->code += (yyvsp[0].symbol)->code;
+				(yyval.symbol)->appendCode((yyvsp[0].symbol)->getCode());
 			}
 #line 1554 "y.tab.c" /* yacc.c:1646  */
     break;
@@ -1560,7 +1560,7 @@ yyreduce:
 				symbolName = (yyvsp[0].symbol)->getName();
 				printToken(symbolName);
 				(yyval.symbol) = new SymbolInfo(symbolName, "NON_TERMINAL");
-				(yyval.symbol)->code += (yyvsp[0].symbol)->code;
+				(yyval.symbol)->appendCode((yyvsp[0].symbol)->getCode());
 			}
 #line 1566 "y.tab.c" /* yacc.c:1646  */
     break;
@@ -1572,7 +1572,7 @@ yyreduce:
 				symbolName = (yyvsp[0].symbol)->getName();
 				printToken(symbolName);
 				(yyval.symbol) = new SymbolInfo(symbolName, "NON_TERMINAL");
-				(yyval.symbol)->code += (yyvsp[0].symbol)->code;
+				(yyval.symbol)->appendCode((yyvsp[0].symbol)->getCode());
 			}
 #line 1578 "y.tab.c" /* yacc.c:1646  */
     break;
@@ -3164,7 +3164,7 @@ yyreturn:
 
 int main(int argc,char *argv[])
 {
-
+	cout << argv[1] << endl;
 	FILE* fp;
 	if((fp=fopen(argv[1],"r"))==NULL)
 	{

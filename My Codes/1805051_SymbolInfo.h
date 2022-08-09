@@ -75,6 +75,10 @@ public:
     void setArraySize(int s) { arraySize = s; }
     int getArraySize() { return arraySize; }
 
+    string getCode() { return code; }
+    void appendCode(string c) { code += c; }
+    void setCode(string c) { code = c; }
+
     ~SymbolInfo()
     {
         // default destructor function

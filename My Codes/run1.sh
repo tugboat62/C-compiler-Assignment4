@@ -12,4 +12,4 @@ g++ -w -c -o l.o lex.yy.c
 echo 'Generated the scanner object file'
 g++ -w y.o l.o -lfl -o 1805051
 echo 'All ready, running'
-./1805051 input.c
+./1805051 input.txt
