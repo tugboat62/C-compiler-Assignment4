@@ -132,8 +132,8 @@ string varProduce(){
 
 string create_template(vector<string> data, string codeString) {
 	string finalCode = ".MODEL SMALL\n\
-	.STACK 100h\n\
-	.DATA\n";
+.STACK 100h\n\
+.DATA\n";
 
 	for (int i = 0; i < data.size(); i++) {
 		finalCode += data[i] + " DW  ?" + "\n";
@@ -1644,7 +1644,7 @@ yyreduce:
 					symbol->setKeyType("function");
 					symbol->setParams(parameterList);
 					table->Insert(*symbol);
-				} 
+				}
 				else {
 					for(int i=0; i<completedFunc.size(); i++) {
 						if(currentFunction == completedFunc[i]) {
@@ -1699,7 +1699,7 @@ yyreduce:
 				}
 
 				(yyval.symbol)->code += currentFunction+" PROC\n";
-				if(currentFunction != "main") {
+				if(currentFunction == "main") {
 					(yyval.symbol)->code += "MOV AX, @DATA\n";
 					(yyval.symbol)->code += "MOV DS, AX\n";
 					(yyval.symbol)->code += "XOR BX, BX\n";
@@ -2804,7 +2804,7 @@ yyreduce:
 				}
 				parameterList.clear();
 				(yyval.symbol)->code += "CALL " + calledFunction + "\n";
-				if (s->getDataType()!="void") {
+				if (s != NULL && s->getDataType()!="void") {
 					(yyval.symbol)->code += "POP AX\n";
 				}
 			}
@@ -2819,7 +2819,7 @@ yyreduce:
 				printToken(symbolName);
 				(yyval.symbol) = new SymbolInfo((yyvsp[-1].symbol)->getName(), "NON_TERMINAL");
 				(yyval.symbol)->setDataType((yyvsp[-1].symbol)->getDataType());
-				(yyval.symbol)->code = (yyvsp[-1].symbol)->code;
+				(yyval.symbol)->code += (yyvsp[-1].symbol)->code;
 			}
 #line 2825 "y.tab.c" /* yacc.c:1646  */
     break;

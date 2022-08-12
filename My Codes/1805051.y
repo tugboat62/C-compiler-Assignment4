@@ -67,8 +67,8 @@ string varProduce(){
 
 string create_template(vector<string> data, string codeString) {
 	string finalCode = ".MODEL SMALL\n\
-	.STACK 100h\n\
-	.DATA\n";
+.STACK 100h\n\
+.DATA\n";
 
 	for (int i = 0; i < data.size(); i++) {
 		finalCode += data[i] + " DW  ?" + "\n";
@@ -275,7 +275,7 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN
 					symbol->setKeyType("function");
 					symbol->setParams(parameterList);
 					table->Insert(*symbol);
-				} 
+				}
 				else {
 					for(int i=0; i<completedFunc.size(); i++) {
 						if(currentFunction == completedFunc[i]) {
@@ -326,7 +326,7 @@ compound_statement
 				}
 
 				$$->code += currentFunction+" PROC\n";
-				if(currentFunction != "main") {
+				if(currentFunction == "main") {
 					$$->code += "MOV AX, @DATA\n";
 					$$->code += "MOV DS, AX\n";
 					$$->code += "XOR BX, BX\n";
@@ -1289,7 +1289,7 @@ factor : variable
 				}
 				parameterList.clear();
 				$$->code += "CALL " + calledFunction + "\n";
-				if (s->getDataType()!="void") {
+				if (s != NULL && s->getDataType()!="void") {
 					$$->code += "POP AX\n";
 				}
 			}
@@ -1300,7 +1300,7 @@ factor : variable
 				printToken(symbolName);
 				$$ = new SymbolInfo($2->getName(), "NON_TERMINAL");
 				$$->setDataType($2->getDataType());
-				$$->code = $2->code;
+				$$->code += $2->code;
 			}
 | CONST_INT
 			{
@@ -1388,6 +1388,7 @@ arguments : arguments COMMA logic_expression
 %%
 int main(int argc,char *argv[])
 {
+	cout << argv[1] << endl;
 	FILE* fp;
 	if((fp=fopen(argv[1],"r"))==NULL)
 	{
