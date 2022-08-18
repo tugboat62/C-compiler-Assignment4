@@ -82,7 +82,8 @@ extern int yydebug;
     RELOP = 292,
     LOGICOP = 293,
     ID = 294,
-    LOWER_THAN_ELSE = 295
+    LOWER_THAN_ELSE = 295,
+    LOWER_THAN_FUNC = 296
   };
 #endif
 /* Tokens.  */
@@ -124,17 +125,18 @@ extern int yydebug;
 #define LOGICOP 293
 #define ID 294
 #define LOWER_THAN_ELSE 295
+#define LOWER_THAN_FUNC 296
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 
 union YYSTYPE
 {
-#line 129 "1805051.y" /* yacc.c:1909  */
+#line 135 "1805051.y" /* yacc.c:1909  */
 
      SymbolInfo *symbol;
 
-#line 138 "y.tab.h" /* yacc.c:1909  */
+#line 140 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

@@ -83,7 +83,7 @@ public:
         this->tableID = pID + "." + to_string(id);
     }
 
-    bool Insert(string name, string type, vector<SymbolInfo> params, string dataType="", string keyType="", int paramsNum=0, int arraySize=0, SymbolInfo *next=NULL, string code="")
+    bool Insert(string name, string type, vector<SymbolInfo> params, string dataType="", string keyType="", int paramsNum=0, int arraySize=0, SymbolInfo *next=NULL, string code="", string varName="")
     {
         int index = hashFunc(name);
 
@@ -98,6 +98,8 @@ public:
             newSymbolInfo->setArraySize(arraySize);
             newSymbolInfo->setNextSymbolInfo(next);
             newSymbolInfo->setCode(code);
+            if(varName == "") newSymbolInfo->setVarName(name);
+            else newSymbolInfo->setVarName(varName);
             table[index] = newSymbolInfo;
             return true;
         }
@@ -137,8 +139,9 @@ public:
             newSymbolInfo->setParamsNum(paramsNum);
             newSymbolInfo->setArraySize(arraySize);
             newSymbolInfo->setNextSymbolInfo(next);
+            if(varName == "") newSymbolInfo->setVarName(name);
+            else newSymbolInfo->setVarName(varName);            
             newSymbolInfo->setCode(code);
-            
             root->setNextSymbolInfo(newSymbolInfo);
             return true;
         }

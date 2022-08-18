@@ -24,16 +24,16 @@ int main(){
 	j = 6;
 	
 	func_a();
-	println(a);
+	printf("%d\n",a);
 	
 	k = foo(i);
-	println(k);
+	printf("%d\n",k);
 	
 	l = bar(i,j);
-	println(l);
+	printf("%d\n",l);
 	
 	j = 6 * bar(i,j) + 2 - 3 * foo(i);
-	println(j);
+	printf("%d\n",j);
 	
  
 	return 0;

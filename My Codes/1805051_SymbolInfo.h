@@ -13,6 +13,7 @@ class SymbolInfo
     string dataType;
     string keyType;
     vector<SymbolInfo> params;
+    string varName;
     int paramsNum;
     int arraySize;
 
@@ -28,6 +29,7 @@ public:
         this->dataType = "";
         this->keyType = "";
         this->code = "";
+        this->varName = "";
         this->paramsNum = 0;
         this->arraySize = 0;
     }
@@ -40,6 +42,7 @@ public:
         this->dataType = "";
         this->keyType = "";
         this->code = "";
+        this->varName = symbolName;
         this->paramsNum = 0;
         this->arraySize = 0;
     }
@@ -78,6 +81,9 @@ public:
     string getCode() { return code; }
     void appendCode(string c) { code += c; }
     void setCode(string c) { code = c; }
+
+    void setVarName(string v) { varName = v; }
+    string getVarName() { return varName; }
 
     ~SymbolInfo()
     {

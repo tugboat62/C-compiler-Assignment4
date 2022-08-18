@@ -19,7 +19,7 @@ vector<string> completedFunc;
 string symbolName;
 string symbolType;
 string calledFunction;
-string currentFunction;
+string currentFunction="global";
 string code;
 string currentDataType = "void";
 vector<string> dataString;
@@ -68,7 +68,8 @@ string varProduce(){
 string create_template(vector<string> data, string codeString) {
 	string finalCode = ".MODEL SMALL\n\
 .STACK 100h\n\
-.DATA\n";
+.DATA\n\n\
+CR EQU 13\nLF EQU 10\n\n";
 
 	for (int i = 0; i < data.size(); i++) {
 		finalCode += data[i] + " DW  ?" + "\n";
@@ -76,9 +77,9 @@ string create_template(vector<string> data, string codeString) {
 	for (int i = 0; i < arraySet.size(); i++) {
 		finalCode += arraySet[i].first + " DW DUP "+arraySet[i].second+" \n";
 	}
-	finalCode += "\n.CODE\n\n" + code;
+	finalCode += "\n.CODE\n\n" + codeString;
 
-	finalCode += "OUTDEC PROC\n\
+	finalCode += "println PROC\n\
 \n\
 PUSH AX\n\
 PUSH BX\n\
@@ -110,12 +111,17 @@ POP DX\n\
 OR DL, 30H\n\
 INT 21H\n\
 LOOP @PRINT_LOOP\n\
+MOV AH, 2\n\
+MOV DL, CR\n\
+INT 21H\n\
+MOV DL, LF\n\
+INT 21H\n\
 POP DX\n\
 POP CX\n\
 POP BX\n\
 POP AX\n\
 RET\n\
-OUTDEC ENDP\n";
+println ENDP\n";
 
 	finalCode += "\nEND MAIN";
 	return finalCode;
@@ -148,6 +154,9 @@ OUTDEC ENDP\n";
 
 %nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE
+
+%nonassoc LOWER_THAN_FUNC
+%nonassoc LPAREN
 
 %%
 
@@ -265,7 +274,11 @@ SEMICOLON
 ;
 
 
-func_definition : type_specifier ID LPAREN parameter_list RPAREN
+func_definition : type_specifier ID
+			{
+				currentFunction = $2->getName();
+			} 
+LPAREN parameter_list RPAREN
 			{
 				currentFunction = $2->getName();
 				SymbolInfo* s = table->LookUp(currentFunction);
@@ -313,26 +326,27 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN
 compound_statement
 			{
 				printInLogFile("func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement", numLine);
-				symbolName = $1->getName()+" "+$2->getName()+" ("+" "+$4->getName()+" )\n"+$7->getName();
+				symbolName = $1->getName()+" "+$2->getName()+" ("+" "+$5->getName()+" )\n"+$8->getName();
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");	
 				completedFunc.push_back(currentFunction);
 
 				SymbolInfo* s = table->LookUp(currentFunction);
 				vector<SymbolInfo> parameters = s->getParams();
-				for (int i=0; i<parameters.size(); i++) {
-					$$->code += "POP AX\n";
-					$$->code += "MOV "+parameters[i].getName()+", AX\n";
-				}
+				
 
 				$$->code += currentFunction+" PROC\n";
+				for (int i=0; i<parameters.size(); i++) {
+					$$->code += "POP AX\n";
+					$$->code += "MOV "+parameters[i].getVarName()+", AX\n";
+				}
 				if(currentFunction == "main") {
 					$$->code += "MOV AX, @DATA\n";
 					$$->code += "MOV DS, AX\n";
 					$$->code += "XOR BX, BX\n";
 					$$->code += "XOR CX, CX\n";
 				}
-				$$->code += $1->code + $2->code + $4->code + $7->code;
+				$$->code += $1->code + $2->code + $5->code + $8->code;
 
 				if(currentFunction != "main") {
 					if(s->getDataType()!="void"){
@@ -345,7 +359,8 @@ compound_statement
 						$$->code += "RET\n";
 					}
 				}else{
-					$$->code += "\nMOV AH, 4CH\nINT 21H\n";
+					$$->code += "\nMOV AH, 4CH\n";
+					$$->code += "INT 21H\n";
 				}	
 				$$->code += currentFunction + " ENDP\n"	;
 			}	
@@ -379,6 +394,8 @@ compound_statement
 				if(currentFunction == "main") {
 					$$->code += "MOV AX, @DATA\n";
 					$$->code += "MOV DS, AX\n";
+					$$->code += "XOR BX, BX\n";
+					$$->code += "XOR CX, CX\n";
 				}
 				else{
 					$$->code += "PUSH AX\n";
@@ -414,6 +431,7 @@ parameter_list : parameter_list COMMA type_specifier ID
 				SymbolInfo* s = new SymbolInfo($4->getName(), $4->getType());
 				s->setKeyType("variable");
 				s->setDataType($3->getName());
+				s->setVarName(varProduce());
 
 				int i=0;
 
@@ -426,10 +444,11 @@ parameter_list : parameter_list COMMA type_specifier ID
 				}
 				if(i == parameterList.size()) {   
 					parameterList.push_back(*s);
+
 				}
 				$$->code += $1->code + $3->code + $4->code;
 
-				dataString.push_back($4->getName());
+				dataString.push_back(s->getVarName());
 			}
 | parameter_list COMMA type_specifier
 			{
@@ -451,9 +470,10 @@ parameter_list : parameter_list COMMA type_specifier ID
 				SymbolInfo* s = new SymbolInfo($2->getName(), $2->getType());
 				s->setKeyType("variable");
 				s->setDataType($1->getName());
+				s->setVarName(varProduce());
 				parameterList.push_back(*s);
 				$$->code += $1->code + $2->code;
-				dataString.push_back($2->getName());
+				dataString.push_back(s->getName());
 			}
 | type_specifier
 			{
@@ -549,6 +569,7 @@ declaration_list : declaration_list COMMA ID
 				SymbolInfo* s = new SymbolInfo($3->getName(), $3->getType());
 				s->setKeyType("variable");
 				s->setDataType(currentDataType);
+				s->setVarName(varProduce());
 				
 				ScopeTable* st = table->getCurrentScope();
 				SymbolInfo* temp = st->LookUp(s->getName());
@@ -561,7 +582,8 @@ declaration_list : declaration_list COMMA ID
 						table->Insert(*s);
 				}
 				printToken(symbolName);
-				dataString.push_back($3->getName());
+				if(currentFunction != "global") dataString.push_back(s->getVarName());
+				else dataString.push_back(s->getName());
 			}
 | declaration_list COMMA ID LTHIRD CONST_INT RTHIRD
 			{
@@ -573,6 +595,7 @@ declaration_list : declaration_list COMMA ID
 				SymbolInfo* s = new SymbolInfo($3->getName(), $3->getType());
 				s->setKeyType("array");
 				s->setDataType(currentDataType);
+				s->setVarName(varProduce());
 				int size = stoi($5->getName());
 				s->setArraySize(size);
 
@@ -587,7 +610,10 @@ declaration_list : declaration_list COMMA ID
 						table->Insert(*s);
 				}
 				printToken(symbolName);
-				arraySet.push_back(make_pair($3->getName(), $5->getName()));
+				if(currentFunction == "global") 
+					arraySet.push_back(make_pair($3->getName(), $5->getName()));
+				else 
+					arraySet.push_back(make_pair(s->getVarName(), $5->getName()));	
 			}
 | ID
 			{
@@ -599,6 +625,7 @@ declaration_list : declaration_list COMMA ID
 				SymbolInfo* s = new SymbolInfo($1->getName(), $1->getType());
 				s->setKeyType("variable");
 				s->setDataType(currentDataType);
+				s->setVarName(varProduce());
 
 				ScopeTable* st = table->getCurrentScope();
 				SymbolInfo* temp = st->LookUp(s->getName());
@@ -611,7 +638,9 @@ declaration_list : declaration_list COMMA ID
 						table->Insert(*s);
 				}
 
-				dataString.push_back($1->getName());
+				if(currentFunction == "global") 
+					dataString.push_back($1->getName());
+				else dataString.push_back(s->getVarName());
 				printToken(symbolName);
 			}
 | ID LTHIRD CONST_INT RTHIRD
@@ -624,6 +653,7 @@ declaration_list : declaration_list COMMA ID
 				SymbolInfo* s = new SymbolInfo($1->getName(), $1->getType());
 				s->setKeyType("array");
 				s->setDataType(currentDataType);
+				s->setVarName(varProduce());
 				int size = stoi($3->getName());
 				s->setArraySize(size);
 
@@ -638,7 +668,10 @@ declaration_list : declaration_list COMMA ID
 						table->Insert(*s);
 				}
 				printToken(symbolName);
-				arraySet.push_back(make_pair($1->getName(), $3->getName()));
+				if(currentFunction == "global") 
+					arraySet.push_back(make_pair($1->getName(), $3->getName()));
+				else
+					arraySet.push_back(make_pair(s->getVarName(), $3->getName()));
 
 			}
 ;
@@ -739,7 +772,6 @@ RPAREN statement
 				temp += "JE " + l + "\n";
 				temp += $5->code;
 				temp += l + ":\n";
-				code = temp;
 				$$->code += temp;
 			}
 | IF LPAREN expression RPAREN statement ELSE statement
@@ -761,7 +793,6 @@ RPAREN statement
 				temp += l1 + ":\n";
 				temp += $7->code;
 				temp += l2 + ":\n";
-				code = temp;
 				$$->code += temp;
 			}
 | WHILE LPAREN expression RPAREN statement
@@ -797,7 +828,10 @@ RPAREN statement
 					printError(l, numLine);
 				}
 				printToken(symbolName);
-				code = "MOV AX, " + $3->getName() + "\nCALL OUTDEC\n"; 
+				if(currentFunction == "global")
+					code = "MOV AX, " + $3->getName() + "\nCALL println\n";
+				else
+					code = "MOV AX, " + $3->getVarName() + "\nCALL println\n"; 
 				$$->code += code;
 			}
 | RETURN expression SEMICOLON
@@ -883,13 +917,14 @@ variable : ID
 					$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
 					$$->setKeyType("array");
 					$$->setDataType(s->getDataType());
+					$$->code += $1->code + $3->code;
+					$$->code += "MOV BX, " + $3->getVarName() + "\n";
+					$$->code += "ADD BX, BX\n";
+					$$->setName($1->getVarName() + "[BX]");
 				}
 				printToken(symbolName);
 
-				$$->code += $1->code + $3->code;
-				$$->code += "MOV BX, " + $3->getName() + "\n";
-				$$->code += "ADD BX, BX\n";
-				$$->setName($1->getName() + "[BX]");
+				
 			}
 ;
 
@@ -902,6 +937,7 @@ expression : logic_expression
 
 				$$ = $1;
 			}
+      //start from here	
 | variable ASSIGNOP logic_expression
 			{
 				symbolName = $1->getName() + " = " + $3->getName();
@@ -922,10 +958,12 @@ expression : logic_expression
 
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
-
+				SymbolInfo* s = table->LookUp($1->getName());
 				$$->code += $1->code + $3->code;
-				$$->code += "MOV AX, " + $3->getName() + "\n";
-				$$->code += "MOV " + $1->getName() + ", AX\n";
+				if($3->getName() != $1->getVarName()) {
+					$$->code += "MOV AX, " + $3->getName() + "\n";
+					$$->code += "MOV " + $1->getVarName() + ", AX\n";
+				}
 			}
 ;
 
@@ -1117,9 +1155,11 @@ simple_expression : term
 					$$->setDataType("int");
 				}
 
-				string temp = "MOV AX, " + $1->getName() + "\n";
+				string temp = $1->code + $3->code;
+				temp += "MOV AX, " + $1->getName() + "\n";
 				temp += "MOV BX, " + $3->getName() + "\n";
 				string t = varProduce();
+				dataString.push_back(t);
 
 				if($2->getName() == "+"){
 					temp += "ADD AX, BX\n";
@@ -1129,8 +1169,6 @@ simple_expression : term
 					temp += "SUB AX, BX\n";
 					temp += "MOV " + t + ", AX\n";
 				}
-
-				code = temp;
 				$$->code += temp;
 				$$->setName(t);
 			}
@@ -1176,13 +1214,14 @@ term : unary_expression
 					}
 				}
 				printToken(symbolName);
-
+//check here
 				string temp = $1->code + $3->code;
 				temp += "MOV AX, " + $1->getName() + "\n";
 				temp += "MOV BX, " + $3->getName() + "\n";
 				string t = varProduce();
+				dataString.push_back(t);
 				if($2->getName() == "*"){
-					temp += "MUL AX, BX\n";
+					temp += "MUL BX\n";
 					temp += "MOV " + t + ", AX\n";
 				}
 				else if($2->getName() == "/"){
@@ -1197,7 +1236,7 @@ term : unary_expression
 					temp += "IDIV BX\n";
 					temp += "MOV " + t + ", DX\n";
 				}
-				code = temp;
+				
 				$$->code += temp;
 				$$->setName(t);
 			}
@@ -1206,13 +1245,25 @@ term : unary_expression
 
 unary_expression : ADDOP unary_expression
 			{
-				symbolName = $1->getName() + " " + $2->getName();
+				symbolName = $1->getName() + $2->getName();
 				printInLogFile("unary_expression : ADDOP unary_expression", numLine);
 				printToken(symbolName);
 
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
 				$$->setDataType($2->getDataType());
 				$$->code = $2->code;
+				string t = varProduce();
+				dataString.push_back(t);
+				if($1->getName() == "-") {
+					$$->code += "MOV AX, " + $2->getName() + "\n";
+					$$->code += "NEG AX\n";
+					$$->code += "MOV " + t + ", AX\n";
+				}
+				else{
+					$$->code += "MOV AX, " + $2->getName() + "\n";
+					$$->code += "MOV " + t + ", " + $2->getName() + "\n";
+				}
+				$$->setName(t);
 			}
 | NOT unary_expression
 			{
@@ -1224,9 +1275,11 @@ unary_expression : ADDOP unary_expression
 				$$->setDataType($2->getDataType());
 
 				string t = varProduce();
+				dataString.push_back(t);
 				$$->code += "MOV AX, " + $2->getName() + "\n";
 				$$->code += "NOT AX\n";
 				$$->code += "MOV " + t + ", AX\n";
+				$$->setName(t);
 			}
 | factor
 			{
@@ -1255,10 +1308,12 @@ factor : variable
 				calledFunction = $1->getName();
 
 				SymbolInfo* s = table->LookUp($1->getName());
-				if(s == NULL) {
-					string l = "Undeclared function " + calledFunction;
-					printError(l, numLine);
-					parameterList.clear();
+				if(s == NULL){
+					if(calledFunction != "println"){
+						string l = "Undeclared function " + calledFunction;
+						printError(l, numLine);
+						parameterList.clear();
+					}
 				}
 				else {
 					vector<SymbolInfo> params = s->getParams();
@@ -1283,14 +1338,27 @@ factor : variable
 					$$->setDataType(s->getDataType());
 				}
 				printToken(symbolName);
-				for(auto i: parameterList){
-					$$->code += "MOV AX, " + i.getName() + "\n";
-					$$->code += "PUSH AX\n";
+				if($1->getName() != "println"){
+					for(auto i: parameterList){
+						$$->code += "MOV AX, " + i.getName() + "\n";
+						$$->code += "PUSH AX\n";
+					}
+					parameterList.clear();
+					$$->code += "CALL " + calledFunction + "\n";
+					if (s != NULL && s->getDataType()!="void") {
+						$$->code += "POP AX\n";
+						string t = varProduce();
+						dataString.push_back(t);
+						$$->code += "MOV " + t + ", AX\n";
+						$$->setName(t);
+					}
 				}
-				parameterList.clear();
-				$$->code += "CALL " + calledFunction + "\n";
-				if (s != NULL && s->getDataType()!="void") {
-					$$->code += "POP AX\n";
+				else {
+					for(auto i: parameterList){
+						$$->code += "MOV AX, " + i.getName() + "\n";
+					}
+					parameterList.clear();
+					$$->code += "CALL " + calledFunction + "\n";
 				}
 			}
 | LPAREN expression RPAREN
@@ -1334,6 +1402,7 @@ factor : variable
 				code += "INC AX\n";
 				code += "MOV " + $1->getName() + ", AX\n";
 				$$->code += code;
+				$$->setName($1->getName());
 			}
 | variable DECOP
 			{
@@ -1345,6 +1414,7 @@ factor : variable
 				code += "DEC AX\n";
 				code += "MOV " + $1->getName() + ", AX\n";
 				$$->code += code;
+				$$->setName($1->getName());
 			}
 ;
 
@@ -1373,7 +1443,7 @@ arguments : arguments COMMA logic_expression
 				printToken(symbolName);
 				$$ = new SymbolInfo(symbolName, "NON_TERMINAL");
 				parameterList.push_back(*$3);
-				$$->code = $1->code + $3->code;	
+				$$->code = $1->code + $3->code;
 			}
 | logic_expression
 			{
@@ -1388,7 +1458,6 @@ arguments : arguments COMMA logic_expression
 %%
 int main(int argc,char *argv[])
 {
-	cout << argv[1] << endl;
 	FILE* fp;
 	if((fp=fopen(argv[1],"r"))==NULL)
 	{
