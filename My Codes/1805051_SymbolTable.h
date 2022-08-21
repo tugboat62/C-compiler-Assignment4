@@ -57,7 +57,7 @@ public:
 
     bool Insert(SymbolInfo symbol) 
     {
-        return currentScope->Insert(symbol.getName(), symbol.getType(), symbol.getParams(), symbol.getDataType(), symbol.getKeyType(), symbol.getParamsNum(), symbol.getArraySize(), symbol.getNextSymbolInfo(), symbol.code, symbol.getVarName());
+        return currentScope->Insert(symbol.getName(), symbol.getType(), symbol.getParams(), symbol.getDataType(), symbol.getKeyType(), symbol.getParamsNum(), symbol.getArraySize(), symbol.getNextSymbolInfo(), symbol.code, symbol.getVarName(), symbol.getIncDec());
     }
 
     bool InsertModified(string name, string type)

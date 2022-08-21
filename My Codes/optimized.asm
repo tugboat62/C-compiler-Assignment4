@@ -1,16 +1,12 @@
 .MODEL SMALL
 .STACK 100h
 .DATA
-
 CR EQU 13
 LF EQU 10
-
 t0 DW  ?
 t1 DW  ?
 t2 DW DUP 3 
-
 .CODE
-
 ;start of function main
 main PROC
 MOV AX, @DATA
@@ -128,14 +124,12 @@ INT 21H
 main ENDP
 ;println procedure implementation
 println PROC
-
 PUSH AX
 PUSH BX
 PUSH CX
 PUSH DX
 OR AX, AX
 JGE @END_IF1
-
 PUSH AX
 MOV DL, '-'
 MOV AH, 2
@@ -152,7 +146,6 @@ PUSH DX
 INC CX
 OR AX, AX
 JNE @REPEAT1
-
 MOV AH, 2
 @PRINT_LOOP:
 POP DX
@@ -170,5 +163,4 @@ POP BX
 POP AX
 RET
 println ENDP
-
 END MAIN

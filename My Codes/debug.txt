@@ -1,0 +1,2705 @@
+Rule: declaration_list : ID
+Code after line 2: 
+
+;variable t0 declared for local variable a
+
+
+Rule: declaration_list : declaration_list COMMA ID
+Code after line 2: 
+
+;variable t1 declared for local variable b
+
+
+Rule: declaration_list : declaration_list COMMA ID LTHIRD CONST_INT RTHIRD
+Code after line 2: 
+
+;variable t2 declared for local variable c
+
+
+Rule: var_declaration : type_specifier declaration_list SEMICOLON
+Code after line 2: 
+
+;variable t2 declared for local variable c
+
+
+Rule: statement : var_declaration
+Code after line 2: 
+
+;variable t2 declared for local variable c
+
+
+Rule: statements : statement
+Code after line 2: 
+
+;variable t2 declared for local variable c
+
+
+Rule: variable : ID
+Code after line 3: 
+
+
+
+Rule: unary_expression : factor
+Code after line 3: 
+
+MOV AX, 1
+
+
+Rule: term : unary_expression
+Code after line 3: 
+
+MOV AX, 1
+
+
+Rule: unary_expression : factor
+Code after line 3: 
+
+MOV AX, 2
+
+
+Rule: term : unary_expression
+Code after line 3: 
+
+MOV AX, 2
+
+
+Rule: simple_expression : term
+Code after line 3: 
+
+MOV AX, 2
+
+
+Rule: unary_expression : factor
+Code after line 3: 
+
+MOV AX, 3
+
+
+Rule: term : unary_expression
+Code after line 3: 
+
+MOV AX, 3
+
+
+Rule: simple_expression : simple_expression ADDOP term
+Code after line 3: 
+
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+
+
+Rule: rel_expression : simple_expression
+Code after line 3: 
+
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+
+
+Rule: logic_expression : rel_expression
+Code after line 3: 
+
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+
+
+Rule: expression : logic_expression
+Code after line 3: 
+
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+
+
+Rule: factor : LPAREN expression RPAREN
+Code after line 3: 
+
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+
+
+Rule: unary_expression : factor
+Code after line 3: 
+
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+
+
+Rule: term : term MULOP unary_expression
+Code after line 3: 
+
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+
+
+Rule: unary_expression : factor
+Code after line 3: 
+
+MOV AX, 3
+
+
+Rule: term : term MULOP unary_expression
+Code after line 3: 
+
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+
+
+Rule: simple_expression : term
+Code after line 3: 
+
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+
+
+Rule: rel_expression : simple_expression
+Code after line 3: 
+
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+
+
+Rule: logic_expression : rel_expression
+Code after line 3: 
+
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+
+
+Rule: expression : variable ASSIGNOP logic_expression
+Code after line 3: 
+
+;assigning 1 * 2 + 3 % 3 to t0
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+MOV t0, AX
+
+
+Rule: expression_statement : expression SEMICOLON
+Code after line 3: 
+
+;assigning 1 * 2 + 3 % 3 to t0
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+MOV t0, AX
+
+
+Rule: statement : expression_statement
+Code after line 3: 
+
+;assigning 1 * 2 + 3 % 3 to t0
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+MOV t0, AX
+
+
+Rule: statements : statements statement
+Code after line 3: 
+
+;variable t2 declared for local variable c
+;assigning 1 * 2 + 3 % 3 to t0
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+MOV t0, AX
+
+
+Rule: variable : ID
+Code after line 4: 
+
+
+
+Rule: unary_expression : factor
+Code after line 4: 
+
+MOV AX, 1
+
+
+Rule: term : unary_expression
+Code after line 4: 
+
+MOV AX, 1
+
+
+Rule: simple_expression : term
+Code after line 4: 
+
+MOV AX, 1
+
+
+Rule: unary_expression : factor
+Code after line 4: 
+
+MOV AX, 5
+
+
+Rule: term : unary_expression
+Code after line 4: 
+
+MOV AX, 5
+
+
+Rule: simple_expression : term
+Code after line 4: 
+
+MOV AX, 5
+
+
+Rule: rel_expression : simple_expression RELOP simple_expression
+Code after line 4: 
+
+;evaluating relational expression
+;evaluating relational expression with < operator
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+MOV AX, 5
+CMP BX, AX
+JNL LABEL0
+MOV AX, 1
+JMP LABEL1
+LABEL0:
+MOV AX, 0
+LABEL1:
+POP BX
+
+
+Rule: logic_expression : rel_expression
+Code after line 4: 
+
+;evaluating relational expression
+;evaluating relational expression with < operator
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+MOV AX, 5
+CMP BX, AX
+JNL LABEL0
+MOV AX, 1
+JMP LABEL1
+LABEL0:
+MOV AX, 0
+LABEL1:
+POP BX
+
+
+Rule: expression : variable ASSIGNOP logic_expression
+Code after line 4: 
+
+;assigning 1 < 5 to t1
+;evaluating relational expression
+;evaluating relational expression with < operator
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+MOV AX, 5
+CMP BX, AX
+JNL LABEL0
+MOV AX, 1
+JMP LABEL1
+LABEL0:
+MOV AX, 0
+LABEL1:
+POP BX
+MOV t1, AX
+
+
+Rule: expression_statement : expression SEMICOLON
+Code after line 4: 
+
+;assigning 1 < 5 to t1
+;evaluating relational expression
+;evaluating relational expression with < operator
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+MOV AX, 5
+CMP BX, AX
+JNL LABEL0
+MOV AX, 1
+JMP LABEL1
+LABEL0:
+MOV AX, 0
+LABEL1:
+POP BX
+MOV t1, AX
+
+
+Rule: statement : expression_statement
+Code after line 4: 
+
+;assigning 1 < 5 to t1
+;evaluating relational expression
+;evaluating relational expression with < operator
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+MOV AX, 5
+CMP BX, AX
+JNL LABEL0
+MOV AX, 1
+JMP LABEL1
+LABEL0:
+MOV AX, 0
+LABEL1:
+POP BX
+MOV t1, AX
+
+
+Rule: statements : statements statement
+Code after line 4: 
+
+;variable t2 declared for local variable c
+;assigning 1 * 2 + 3 % 3 to t0
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+MOV t0, AX
+;assigning 1 < 5 to t1
+;evaluating relational expression
+;evaluating relational expression with < operator
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+MOV AX, 5
+CMP BX, AX
+JNL LABEL0
+MOV AX, 1
+JMP LABEL1
+LABEL0:
+MOV AX, 0
+LABEL1:
+POP BX
+MOV t1, AX
+
+
+Rule: unary_expression : factor
+Code after line 5: 
+
+MOV AX, 0
+
+
+Rule: term : unary_expression
+Code after line 5: 
+
+MOV AX, 0
+
+
+Rule: simple_expression : term
+Code after line 5: 
+
+MOV AX, 0
+
+
+Rule: rel_expression : simple_expression
+Code after line 5: 
+
+MOV AX, 0
+
+
+Rule: logic_expression : rel_expression
+Code after line 5: 
+
+MOV AX, 0
+
+
+Rule: expression : logic_expression
+Code after line 5: 
+
+MOV AX, 0
+
+
+Rule: variable : ID LTHIRD expression RTHIRD
+Code after line 5: 
+
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+
+
+Rule: unary_expression : factor
+Code after line 5: 
+
+MOV AX, 2
+
+
+Rule: term : unary_expression
+Code after line 5: 
+
+MOV AX, 2
+
+
+Rule: simple_expression : term
+Code after line 5: 
+
+MOV AX, 2
+
+
+Rule: rel_expression : simple_expression
+Code after line 5: 
+
+MOV AX, 2
+
+
+Rule: logic_expression : rel_expression
+Code after line 5: 
+
+MOV AX, 2
+
+
+Rule: expression : variable ASSIGNOP logic_expression
+Code after line 5: 
+
+;assigning 2 to [SI]
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 2
+MOV [SI], AX
+
+
+Rule: expression_statement : expression SEMICOLON
+Code after line 5: 
+
+;assigning 2 to [SI]
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 2
+MOV [SI], AX
+
+
+Rule: statement : expression_statement
+Code after line 5: 
+
+;assigning 2 to [SI]
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 2
+MOV [SI], AX
+
+
+Rule: statements : statements statement
+Code after line 5: 
+
+;variable t2 declared for local variable c
+;assigning 1 * 2 + 3 % 3 to t0
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+MOV t0, AX
+;assigning 1 < 5 to t1
+;evaluating relational expression
+;evaluating relational expression with < operator
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+MOV AX, 5
+CMP BX, AX
+JNL LABEL0
+MOV AX, 1
+JMP LABEL1
+LABEL0:
+MOV AX, 0
+LABEL1:
+POP BX
+MOV t1, AX
+;assigning 2 to [SI]
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 2
+MOV [SI], AX
+
+
+Rule: variable : ID
+Code after line 6: 
+
+
+
+Rule: factor : variable
+Code after line 6: 
+
+MOV AX, t0
+
+
+Rule: unary_expression : factor
+Code after line 6: 
+
+MOV AX, t0
+
+
+Rule: term : unary_expression
+Code after line 6: 
+
+MOV AX, t0
+
+
+Rule: simple_expression : term
+Code after line 6: 
+
+MOV AX, t0
+
+
+Rule: rel_expression : simple_expression
+Code after line 6: 
+
+MOV AX, t0
+
+
+Rule: variable : ID
+Code after line 6: 
+
+
+
+Rule: factor : variable
+Code after line 6: 
+
+MOV AX, t1
+
+
+Rule: unary_expression : factor
+Code after line 6: 
+
+MOV AX, t1
+
+
+Rule: term : unary_expression
+Code after line 6: 
+
+MOV AX, t1
+
+
+Rule: simple_expression : term
+Code after line 6: 
+
+MOV AX, t1
+
+
+Rule: rel_expression : simple_expression
+Code after line 6: 
+
+MOV AX, t1
+
+
+Rule: logic_expression : rel_expression LOGICOP rel_expression
+Code after line 6: 
+
+;evaluating logic expression
+;evaluating logic expression with && operator
+MOV AX, t0
+PUSH BX
+MOV BX, AX
+MOV AX, t1
+CMP BX, 0
+JE LABEL2
+CMP AX, 0
+JE LABEL2
+MOV AX, 1
+JMP LABEL3
+LABEL2:
+MOV AX, 0
+LABEL3:
+POP BX
+
+
+Rule: expression : logic_expression
+Code after line 6: 
+
+;evaluating logic expression
+;evaluating logic expression with && operator
+MOV AX, t0
+PUSH BX
+MOV BX, AX
+MOV AX, t1
+CMP BX, 0
+JE LABEL2
+CMP AX, 0
+JE LABEL2
+MOV AX, 1
+JMP LABEL3
+LABEL2:
+MOV AX, 0
+LABEL3:
+POP BX
+
+
+Rule: unary_expression : factor
+Code after line 7: 
+
+MOV AX, 0
+
+
+Rule: term : unary_expression
+Code after line 7: 
+
+MOV AX, 0
+
+
+Rule: simple_expression : term
+Code after line 7: 
+
+MOV AX, 0
+
+
+Rule: rel_expression : simple_expression
+Code after line 7: 
+
+MOV AX, 0
+
+
+Rule: logic_expression : rel_expression
+Code after line 7: 
+
+MOV AX, 0
+
+
+Rule: expression : logic_expression
+Code after line 7: 
+
+MOV AX, 0
+
+
+Rule: variable : ID LTHIRD expression RTHIRD
+Code after line 7: 
+
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+
+
+Rule: factor : variable INCOP
+Code after line 7: 
+
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+
+
+Rule: unary_expression : factor
+Code after line 7: 
+
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+
+
+Rule: term : unary_expression
+Code after line 7: 
+
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+
+
+Rule: simple_expression : term
+Code after line 7: 
+
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+
+
+Rule: rel_expression : simple_expression
+Code after line 7: 
+
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+
+
+Rule: logic_expression : rel_expression
+Code after line 7: 
+
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+
+
+Rule: expression : logic_expression
+Code after line 7: 
+
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+
+
+Rule: expression_statement : expression SEMICOLON
+Code after line 7: 
+
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+
+
+Rule: statement : expression_statement
+Code after line 7: 
+
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+
+
+Rule: unary_expression : factor
+Code after line 9: 
+
+MOV AX, 1
+
+
+Rule: term : unary_expression
+Code after line 9: 
+
+MOV AX, 1
+
+
+Rule: simple_expression : term
+Code after line 9: 
+
+MOV AX, 1
+
+
+Rule: rel_expression : simple_expression
+Code after line 9: 
+
+MOV AX, 1
+
+
+Rule: logic_expression : rel_expression
+Code after line 9: 
+
+MOV AX, 1
+
+
+Rule: expression : logic_expression
+Code after line 9: 
+
+MOV AX, 1
+
+
+Rule: variable : ID LTHIRD expression RTHIRD
+Code after line 9: 
+
+MOV AX, 1
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+
+
+Rule: unary_expression : factor
+Code after line 9: 
+
+MOV AX, 0
+
+
+Rule: term : unary_expression
+Code after line 9: 
+
+MOV AX, 0
+
+
+Rule: simple_expression : term
+Code after line 9: 
+
+MOV AX, 0
+
+
+Rule: rel_expression : simple_expression
+Code after line 9: 
+
+MOV AX, 0
+
+
+Rule: logic_expression : rel_expression
+Code after line 9: 
+
+MOV AX, 0
+
+
+Rule: expression : logic_expression
+Code after line 9: 
+
+MOV AX, 0
+
+
+Rule: variable : ID LTHIRD expression RTHIRD
+Code after line 9: 
+
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+
+
+Rule: factor : variable
+Code after line 9: 
+
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+
+
+Rule: unary_expression : factor
+Code after line 9: 
+
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+
+
+Rule: term : unary_expression
+Code after line 9: 
+
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+
+
+Rule: simple_expression : term
+Code after line 9: 
+
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+
+
+Rule: rel_expression : simple_expression
+Code after line 9: 
+
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+
+
+Rule: logic_expression : rel_expression
+Code after line 9: 
+
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+
+
+Rule: expression : variable ASSIGNOP logic_expression
+Code after line 9: 
+
+;assigning [SI] to [SI]
+MOV AX, 1
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+MOV [SI], AX
+
+
+Rule: expression_statement : expression SEMICOLON
+Code after line 9: 
+
+;assigning [SI] to [SI]
+MOV AX, 1
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+MOV [SI], AX
+
+
+Rule: statement : expression_statement
+Code after line 9: 
+
+;assigning [SI] to [SI]
+MOV AX, 1
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+MOV [SI], AX
+
+
+Rule: statement : IF LPAREN expression RPAREN statement ELSE statement
+Code after line 9: 
+
+;start of if else statement
+;evaluating logic expression
+;evaluating logic expression with && operator
+MOV AX, t0
+PUSH BX
+MOV BX, AX
+MOV AX, t1
+CMP BX, 0
+JE LABEL2
+CMP AX, 0
+JE LABEL2
+MOV AX, 1
+JMP LABEL3
+LABEL2:
+MOV AX, 0
+LABEL3:
+POP BX
+CMP AX, 0
+JE LABEL4
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+JMP LABEL5
+LABEL4:
+;assigning [SI] to [SI]
+MOV AX, 1
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+MOV [SI], AX
+LABEL5:
+;end of if else statement
+
+
+Rule: statements : statements statement
+Code after line 9: 
+
+;variable t2 declared for local variable c
+;assigning 1 * 2 + 3 % 3 to t0
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+MOV t0, AX
+;assigning 1 < 5 to t1
+;evaluating relational expression
+;evaluating relational expression with < operator
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+MOV AX, 5
+CMP BX, AX
+JNL LABEL0
+MOV AX, 1
+JMP LABEL1
+LABEL0:
+MOV AX, 0
+LABEL1:
+POP BX
+MOV t1, AX
+;assigning 2 to [SI]
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 2
+MOV [SI], AX
+;start of if else statement
+;evaluating logic expression
+;evaluating logic expression with && operator
+MOV AX, t0
+PUSH BX
+MOV BX, AX
+MOV AX, t1
+CMP BX, 0
+JE LABEL2
+CMP AX, 0
+JE LABEL2
+MOV AX, 1
+JMP LABEL3
+LABEL2:
+MOV AX, 0
+LABEL3:
+POP BX
+CMP AX, 0
+JE LABEL4
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+JMP LABEL5
+LABEL4:
+;assigning [SI] to [SI]
+MOV AX, 1
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+MOV [SI], AX
+LABEL5:
+;end of if else statement
+
+
+Rule: variable : ID
+Code after line 10: 
+
+
+
+Rule: factor : variable
+Code after line 10: 
+
+MOV AX, t0
+
+
+Rule: unary_expression : factor
+Code after line 10: 
+
+MOV AX, t0
+
+
+Rule: term : unary_expression
+Code after line 10: 
+
+MOV AX, t0
+
+
+Rule: simple_expression : term
+Code after line 10: 
+
+MOV AX, t0
+
+
+Rule: rel_expression : simple_expression
+Code after line 10: 
+
+MOV AX, t0
+
+
+Rule: logic_expression : rel_expression
+Code after line 10: 
+
+MOV AX, t0
+
+
+Rule: arguments : logic_expression
+Code after line 10: 
+
+MOV AX, t0
+PUSH AX
+
+
+Rule: argument_list : arguments
+Code after line 10: 
+
+MOV AX, t0
+PUSH AX
+
+
+Rule: factor : ID LPAREN argument_list RPAREN
+Code after line 10: 
+
+;calling the function println
+MOV AX, t0
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: unary_expression : factor
+Code after line 10: 
+
+;calling the function println
+MOV AX, t0
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: term : unary_expression
+Code after line 10: 
+
+;calling the function println
+MOV AX, t0
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: simple_expression : term
+Code after line 10: 
+
+;calling the function println
+MOV AX, t0
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: rel_expression : simple_expression
+Code after line 10: 
+
+;calling the function println
+MOV AX, t0
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: logic_expression : rel_expression
+Code after line 10: 
+
+;calling the function println
+MOV AX, t0
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: expression : logic_expression
+Code after line 10: 
+
+;calling the function println
+MOV AX, t0
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: expression_statement : expression SEMICOLON
+Code after line 10: 
+
+;calling the function println
+MOV AX, t0
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: statement : expression_statement
+Code after line 10: 
+
+;calling the function println
+MOV AX, t0
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: statements : statements statement
+Code after line 10: 
+
+;variable t2 declared for local variable c
+;assigning 1 * 2 + 3 % 3 to t0
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+MOV t0, AX
+;assigning 1 < 5 to t1
+;evaluating relational expression
+;evaluating relational expression with < operator
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+MOV AX, 5
+CMP BX, AX
+JNL LABEL0
+MOV AX, 1
+JMP LABEL1
+LABEL0:
+MOV AX, 0
+LABEL1:
+POP BX
+MOV t1, AX
+;assigning 2 to [SI]
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 2
+MOV [SI], AX
+;start of if else statement
+;evaluating logic expression
+;evaluating logic expression with && operator
+MOV AX, t0
+PUSH BX
+MOV BX, AX
+MOV AX, t1
+CMP BX, 0
+JE LABEL2
+CMP AX, 0
+JE LABEL2
+MOV AX, 1
+JMP LABEL3
+LABEL2:
+MOV AX, 0
+LABEL3:
+POP BX
+CMP AX, 0
+JE LABEL4
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+JMP LABEL5
+LABEL4:
+;assigning [SI] to [SI]
+MOV AX, 1
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+MOV [SI], AX
+LABEL5:
+;end of if else statement
+;calling the function println
+MOV AX, t0
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: variable : ID
+Code after line 11: 
+
+
+
+Rule: factor : variable
+Code after line 11: 
+
+MOV AX, t1
+
+
+Rule: unary_expression : factor
+Code after line 11: 
+
+MOV AX, t1
+
+
+Rule: term : unary_expression
+Code after line 11: 
+
+MOV AX, t1
+
+
+Rule: simple_expression : term
+Code after line 11: 
+
+MOV AX, t1
+
+
+Rule: rel_expression : simple_expression
+Code after line 11: 
+
+MOV AX, t1
+
+
+Rule: logic_expression : rel_expression
+Code after line 11: 
+
+MOV AX, t1
+
+
+Rule: arguments : logic_expression
+Code after line 11: 
+
+MOV AX, t1
+PUSH AX
+
+
+Rule: argument_list : arguments
+Code after line 11: 
+
+MOV AX, t1
+PUSH AX
+
+
+Rule: factor : ID LPAREN argument_list RPAREN
+Code after line 11: 
+
+;calling the function println
+MOV AX, t1
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: unary_expression : factor
+Code after line 11: 
+
+;calling the function println
+MOV AX, t1
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: term : unary_expression
+Code after line 11: 
+
+;calling the function println
+MOV AX, t1
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: simple_expression : term
+Code after line 11: 
+
+;calling the function println
+MOV AX, t1
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: rel_expression : simple_expression
+Code after line 11: 
+
+;calling the function println
+MOV AX, t1
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: logic_expression : rel_expression
+Code after line 11: 
+
+;calling the function println
+MOV AX, t1
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: expression : logic_expression
+Code after line 11: 
+
+;calling the function println
+MOV AX, t1
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: expression_statement : expression SEMICOLON
+Code after line 11: 
+
+;calling the function println
+MOV AX, t1
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: statement : expression_statement
+Code after line 11: 
+
+;calling the function println
+MOV AX, t1
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: statements : statements statement
+Code after line 11: 
+
+;variable t2 declared for local variable c
+;assigning 1 * 2 + 3 % 3 to t0
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+MOV t0, AX
+;assigning 1 < 5 to t1
+;evaluating relational expression
+;evaluating relational expression with < operator
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+MOV AX, 5
+CMP BX, AX
+JNL LABEL0
+MOV AX, 1
+JMP LABEL1
+LABEL0:
+MOV AX, 0
+LABEL1:
+POP BX
+MOV t1, AX
+;assigning 2 to [SI]
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 2
+MOV [SI], AX
+;start of if else statement
+;evaluating logic expression
+;evaluating logic expression with && operator
+MOV AX, t0
+PUSH BX
+MOV BX, AX
+MOV AX, t1
+CMP BX, 0
+JE LABEL2
+CMP AX, 0
+JE LABEL2
+MOV AX, 1
+JMP LABEL3
+LABEL2:
+MOV AX, 0
+LABEL3:
+POP BX
+CMP AX, 0
+JE LABEL4
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+JMP LABEL5
+LABEL4:
+;assigning [SI] to [SI]
+MOV AX, 1
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+MOV [SI], AX
+LABEL5:
+;end of if else statement
+;calling the function println
+MOV AX, t0
+PUSH AX
+POP AX
+CALL println
+;calling the function println
+MOV AX, t1
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: compound_statement : LCURL statements RCURL
+Code after line 12: 
+
+;variable t2 declared for local variable c
+;assigning 1 * 2 + 3 % 3 to t0
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+MOV t0, AX
+;assigning 1 < 5 to t1
+;evaluating relational expression
+;evaluating relational expression with < operator
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+MOV AX, 5
+CMP BX, AX
+JNL LABEL0
+MOV AX, 1
+JMP LABEL1
+LABEL0:
+MOV AX, 0
+LABEL1:
+POP BX
+MOV t1, AX
+;assigning 2 to [SI]
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 2
+MOV [SI], AX
+;start of if else statement
+;evaluating logic expression
+;evaluating logic expression with && operator
+MOV AX, t0
+PUSH BX
+MOV BX, AX
+MOV AX, t1
+CMP BX, 0
+JE LABEL2
+CMP AX, 0
+JE LABEL2
+MOV AX, 1
+JMP LABEL3
+LABEL2:
+MOV AX, 0
+LABEL3:
+POP BX
+CMP AX, 0
+JE LABEL4
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+JMP LABEL5
+LABEL4:
+;assigning [SI] to [SI]
+MOV AX, 1
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+MOV [SI], AX
+LABEL5:
+;end of if else statement
+;calling the function println
+MOV AX, t0
+PUSH AX
+POP AX
+CALL println
+;calling the function println
+MOV AX, t1
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: func_definition : type_specifier ID LPAREN RPAREN compound_statement
+Code after line 12: 
+
+;variable t2 declared for local variable c
+;assigning 1 * 2 + 3 % 3 to t0
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+MOV t0, AX
+;assigning 1 < 5 to t1
+;evaluating relational expression
+;evaluating relational expression with < operator
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+MOV AX, 5
+CMP BX, AX
+JNL LABEL0
+MOV AX, 1
+JMP LABEL1
+LABEL0:
+MOV AX, 0
+LABEL1:
+POP BX
+MOV t1, AX
+;assigning 2 to [SI]
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 2
+MOV [SI], AX
+;start of if else statement
+;evaluating logic expression
+;evaluating logic expression with && operator
+MOV AX, t0
+PUSH BX
+MOV BX, AX
+MOV AX, t1
+CMP BX, 0
+JE LABEL2
+CMP AX, 0
+JE LABEL2
+MOV AX, 1
+JMP LABEL3
+LABEL2:
+MOV AX, 0
+LABEL3:
+POP BX
+CMP AX, 0
+JE LABEL4
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+JMP LABEL5
+LABEL4:
+;assigning [SI] to [SI]
+MOV AX, 1
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+MOV [SI], AX
+LABEL5:
+;end of if else statement
+;calling the function println
+MOV AX, t0
+PUSH AX
+POP AX
+CALL println
+;calling the function println
+MOV AX, t1
+PUSH AX
+POP AX
+CALL println
+
+
+Rule: func_definition : type_specifier ID LPAREN RPAREN compound_statement
+Code after line 12: 
+
+;start of function main
+main PROC
+MOV AX, @DATA
+MOV DS, AX
+XOR BX, BX
+XOR CX, CX
+;variable t2 declared for local variable c
+;assigning 1 * 2 + 3 % 3 to t0
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+MOV t0, AX
+;assigning 1 < 5 to t1
+;evaluating relational expression
+;evaluating relational expression with < operator
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+MOV AX, 5
+CMP BX, AX
+JNL LABEL0
+MOV AX, 1
+JMP LABEL1
+LABEL0:
+MOV AX, 0
+LABEL1:
+POP BX
+MOV t1, AX
+;assigning 2 to [SI]
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 2
+MOV [SI], AX
+;start of if else statement
+;evaluating logic expression
+;evaluating logic expression with && operator
+MOV AX, t0
+PUSH BX
+MOV BX, AX
+MOV AX, t1
+CMP BX, 0
+JE LABEL2
+CMP AX, 0
+JE LABEL2
+MOV AX, 1
+JMP LABEL3
+LABEL2:
+MOV AX, 0
+LABEL3:
+POP BX
+CMP AX, 0
+JE LABEL4
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+JMP LABEL5
+LABEL4:
+;assigning [SI] to [SI]
+MOV AX, 1
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+MOV [SI], AX
+LABEL5:
+;end of if else statement
+;calling the function println
+MOV AX, t0
+PUSH AX
+POP AX
+CALL println
+;calling the function println
+MOV AX, t1
+PUSH AX
+POP AX
+CALL println
+MOV AH, 4CH
+INT 21H
+main ENDP
+
+
+Rule: unit : func_definition
+Code after line 12: 
+
+;start of function main
+main PROC
+MOV AX, @DATA
+MOV DS, AX
+XOR BX, BX
+XOR CX, CX
+;variable t2 declared for local variable c
+;assigning 1 * 2 + 3 % 3 to t0
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+MOV t0, AX
+;assigning 1 < 5 to t1
+;evaluating relational expression
+;evaluating relational expression with < operator
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+MOV AX, 5
+CMP BX, AX
+JNL LABEL0
+MOV AX, 1
+JMP LABEL1
+LABEL0:
+MOV AX, 0
+LABEL1:
+POP BX
+MOV t1, AX
+;assigning 2 to [SI]
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 2
+MOV [SI], AX
+;start of if else statement
+;evaluating logic expression
+;evaluating logic expression with && operator
+MOV AX, t0
+PUSH BX
+MOV BX, AX
+MOV AX, t1
+CMP BX, 0
+JE LABEL2
+CMP AX, 0
+JE LABEL2
+MOV AX, 1
+JMP LABEL3
+LABEL2:
+MOV AX, 0
+LABEL3:
+POP BX
+CMP AX, 0
+JE LABEL4
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+JMP LABEL5
+LABEL4:
+;assigning [SI] to [SI]
+MOV AX, 1
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+MOV [SI], AX
+LABEL5:
+;end of if else statement
+;calling the function println
+MOV AX, t0
+PUSH AX
+POP AX
+CALL println
+;calling the function println
+MOV AX, t1
+PUSH AX
+POP AX
+CALL println
+MOV AH, 4CH
+INT 21H
+main ENDP
+
+
+Rule: program : unit
+Code after line 12: 
+
+;start of function main
+main PROC
+MOV AX, @DATA
+MOV DS, AX
+XOR BX, BX
+XOR CX, CX
+;variable t2 declared for local variable c
+;assigning 1 * 2 + 3 % 3 to t0
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+MOV t0, AX
+;assigning 1 < 5 to t1
+;evaluating relational expression
+;evaluating relational expression with < operator
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+MOV AX, 5
+CMP BX, AX
+JNL LABEL0
+MOV AX, 1
+JMP LABEL1
+LABEL0:
+MOV AX, 0
+LABEL1:
+POP BX
+MOV t1, AX
+;assigning 2 to [SI]
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 2
+MOV [SI], AX
+;start of if else statement
+;evaluating logic expression
+;evaluating logic expression with && operator
+MOV AX, t0
+PUSH BX
+MOV BX, AX
+MOV AX, t1
+CMP BX, 0
+JE LABEL2
+CMP AX, 0
+JE LABEL2
+MOV AX, 1
+JMP LABEL3
+LABEL2:
+MOV AX, 0
+LABEL3:
+POP BX
+CMP AX, 0
+JE LABEL4
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+JMP LABEL5
+LABEL4:
+;assigning [SI] to [SI]
+MOV AX, 1
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+MOV [SI], AX
+LABEL5:
+;end of if else statement
+;calling the function println
+MOV AX, t0
+PUSH AX
+POP AX
+CALL println
+;calling the function println
+MOV AX, t1
+PUSH AX
+POP AX
+CALL println
+MOV AH, 4CH
+INT 21H
+main ENDP
+
+
+start : program
+.MODEL SMALL
+.STACK 100h
+.DATA
+
+CR EQU 13
+LF EQU 10
+
+t0 DW  ?
+t1 DW  ?
+t2 DW DUP 3 
+
+.CODE
+
+;start of function main
+main PROC
+MOV AX, @DATA
+MOV DS, AX
+XOR BX, BX
+XOR CX, CX
+;variable t2 declared for local variable c
+;assigning 1 * 2 + 3 % 3 to t0
+;evaluating term 1 * 2 + 3 % 3
+;evaluating term 1 * 2 + 3
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+;evaluating simple expression 2 + 3
+MOV AX, 2
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+ADD AX, BX
+POP BX
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+MUL BX
+POP BX
+PUSH BX
+MOV BX, AX
+MOV AX, 3
+PUSH CX
+MOV CX, AX
+MOV AX, BX
+MOV BX, CX
+POP CX
+XOR DX, DX
+CWD
+IDIV BX
+MOV AX, DX
+POP BX
+MOV t0, AX
+;assigning 1 < 5 to t1
+;evaluating relational expression
+;evaluating relational expression with < operator
+MOV AX, 1
+PUSH BX
+MOV BX, AX
+MOV AX, 5
+CMP BX, AX
+JNL LABEL0
+MOV AX, 1
+JMP LABEL1
+LABEL0:
+MOV AX, 0
+LABEL1:
+POP BX
+MOV t1, AX
+;assigning 2 to [SI]
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 2
+MOV [SI], AX
+;start of if else statement
+;evaluating logic expression
+;evaluating logic expression with && operator
+MOV AX, t0
+PUSH BX
+MOV BX, AX
+MOV AX, t1
+CMP BX, 0
+JE LABEL2
+CMP AX, 0
+JE LABEL2
+MOV AX, 1
+JMP LABEL3
+LABEL2:
+MOV AX, 0
+LABEL3:
+POP BX
+CMP AX, 0
+JE LABEL4
+;incrementing the variable [SI]
+MOV AX, [SI]
+INC AX
+MOV [SI], AX
+JMP LABEL5
+LABEL4:
+;assigning [SI] to [SI]
+MOV AX, 1
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, 0
+MOV SI, offset t2
+ADD AX, AX
+ADD SI, AX
+MOV AX, [SI]
+MOV [SI], AX
+LABEL5:
+;end of if else statement
+;calling the function println
+MOV AX, t0
+PUSH AX
+POP AX
+CALL println
+;calling the function println
+MOV AX, t1
+PUSH AX
+POP AX
+CALL println
+MOV AH, 4CH
+INT 21H
+main ENDP
+;println procedure implementation
+println PROC
+
+PUSH AX
+PUSH BX
+PUSH CX
+PUSH DX
+OR AX, AX
+JGE @END_IF1
+
+PUSH AX
+MOV DL, '-'
+MOV AH, 2
+INT 21H
+POP AX
+NEG AX
+@END_IF1:
+XOR CX, CX
+MOV BX, 10D
+@REPEAT1:
+XOR DX, DX
+DIV BX
+PUSH DX
+INC CX
+OR AX, AX
+JNE @REPEAT1
+
+MOV AH, 2
+@PRINT_LOOP:
+POP DX
+OR DL, 30H
+INT 21H
+LOOP @PRINT_LOOP
+MOV AH, 2
+MOV DL, CR
+INT 21H
+MOV DL, LF
+INT 21H
+POP DX
+POP CX
+POP BX
+POP AX
+RET
+println ENDP
+
+END MAIN

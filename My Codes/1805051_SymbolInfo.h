@@ -16,6 +16,7 @@ class SymbolInfo
     string varName;
     int paramsNum;
     int arraySize;
+    bool incDec;
 
     SymbolInfo *next;
 
@@ -32,6 +33,7 @@ public:
         this->varName = "";
         this->paramsNum = 0;
         this->arraySize = 0;
+        this->incDec = false;
     }
 
     SymbolInfo(string symbolName, string symbolType, SymbolInfo *nextPointer = NULL)
@@ -45,6 +47,7 @@ public:
         this->varName = symbolName;
         this->paramsNum = 0;
         this->arraySize = 0;
+        this->incDec = false;
     }
 
     string getName() { return this->name; }
@@ -84,6 +87,9 @@ public:
 
     void setVarName(string v) { varName = v; }
     string getVarName() { return varName; }
+
+    void setIncDec(bool b) { incDec = b; }
+    bool getIncDec() { return incDec; }
 
     ~SymbolInfo()
     {
